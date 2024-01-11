@@ -1,80 +1,75 @@
 
 from flask import Flask, jsonify, request, abort
-from bookDAO import bookDAO
+from moviesDAO import moviesDAO
 
-app = Flask(__name__, static_url_path='', static_folder='.')
+app = Flask(__name__, static_url_path='', static_folder='staticpages')
 
-#app = Flask(__name__)
-
-#@app.route('/')
-#def index():
-#    return "Hello, World!"
-
-#curl "http://127.0.0.1:5000/books"
-@app.route('/books')
+@app.route('/movies')
 def getAll():
-    #print("in getall")
-    results = bookDAO.getAll()
+    results = moviesDAO.getAll()
     return jsonify(results)
 
-#curl "http://127.0.0.1:5000/books/2"
-@app.route('/books/<int:id>')
-def findById(id):
-    foundBook = bookDAO.findByID(id)
-    
-    return jsonify(foundBook)
 
-#curl  -i -H "Content-Type:application/json" -X POST -d "{\"title\":\"hello\",\"author\":\"someone\",\"price\":123}" http://127.0.0.1:5000/books
-@app.route('/books', methods=['POST'])
+# View all titles
+@app.route('/movies', methods=['GET'])
+def get_all_products():
+    titles = moviesdao.getAll()
+    return jsonify(products)
+
+
+@app.route('/movies/<int:id>')
+def findById(id):
+    foundBook = moviesDAO.findByID(id)
+    
+    return jsonify()
+
+
+@app.route('/movies', methods=['POST'])
 def create():
     
     if not request.json:
         abort(400)
-    # other checking 
-    book = {
-        "title": request.json['title'],
-        "author": request.json['author'],
-        "price": request.json['price'],
+    movies = {
+        "movie": request.json['title'],
+        "rating": request.json['rating'],
+        "year": request.json['year'],
     }
-    values =(book['title'],book['author'],book['price'])
-    newId = bookDAO.create(values)
-    book['id'] = newId
-    return jsonify(book)
+    values =(['movie'],movies['rating'],movies['year'])
+    newId = moviesDAO.create(values)
+    title['id'] = newId
+    return jsonify(title)
 
-#curl  -i -H "Content-Type:application/json" -X PUT -d "{\"title\":\"hello\",\"author\":\"someone\",\"price\":123}" http://127.0.0.1:5000/books/1
-@app.route('/books/<int:id>', methods=['PUT'])
+
+@app.route('/movies/<int:id>', methods=['PUT'])
 def update(id):
-    foundBook = bookDAO.findByID(id)
-    if not foundBook:
+    foundmovie = moviesDAO.findByID(id)
+    if not foundmovie:
         abort(404)
     
     if not request.json:
         abort(400)
     reqJson = request.json
-    if 'price' in reqJson and type(reqJson['price']) is not int:
+    if 'movie' in reqJson and type(reqJson['movie']) is not int:
         abort(400)
 
     if 'title' in reqJson:
-        foundBook['title'] = reqJson['title']
-    if 'Author' in reqJson:
-        foundBook['author'] = reqJson['author']
-    if 'price' in reqJson:
-        foundBook['price'] = reqJson['price']
-    values = (foundBook['title'],foundBook['author'],foundBook['price'],foundBook['id'])
-    bookDAO.update(values)
+        foundmovie['title'] = reqJson['title']
+    if 'rating' in reqJson:
+        foundmovie['rating'] = reqJson['rating']
+    if 'year' in reqJson:
+        foundmovie['year'] = reqJson['year']
+    values = (foundmovie['movie'],foundmovie['rating'],foundmovie['year'])
+    movieDAO.update(values)
     
-    return jsonify(foundBook)
+    return jsonify(foundmovie)
         
 
-    
-
-@app.route('/books/<int:id>' , methods=['DELETE'])
+@app.route('/movies/<int:id>' , methods=['DELETE'])
 def delete(id):
-    bookDAO.delete(id)
+    moviesDAO.delete(id)
     return jsonify({"done":True})
-
-
 
 
 if __name__ == '__main__' :
     app.run(debug= True)
+    

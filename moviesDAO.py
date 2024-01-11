@@ -1,20 +1,38 @@
 import mysql.connector
-class StudentDAO:
+import dbconfig as cfg
+
+
+
+class moviesDAO:
+    connection=""
+    cursor =''
+    host=       ''
+    user=       ''
+    password=   ''
+    database=   ''
+    
+    
+    
+class moviesDAO:
     db=""
     def __init__(self): 
         self.db = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="",
-        #user="datarep",  # this is the user name on my mac
-        #passwd="password" # for my mac
-        database="datarepresentation"
+        password="root123",
+        database="movies"
         )
+        
+    def createDbTable(self):
+        cursor = self.getcursor()
+        sql = "CREATE TABLE movies (id int NOT NULL AUTO_INCREMENT, Movie VARCHAR(250), Rating VARCHAR(20), year int, PRIMARY KEY (id))"
+        cursor.execute(sql)
+        self.closeAll()
     
             
     def create(self, values):
         cursor = self.db.cursor()
-        sql="insert into student (name, age) values (%s,%s)"
+        sql="insert into movies (movie, rating, year) values (%s,%s, %s)"
         cursor.execute(sql, values)
 
         self.db.commit()
@@ -22,7 +40,7 @@ class StudentDAO:
 
     def getAll(self):
         cursor = self.db.cursor()
-        sql="select * from student"
+        sql="select * from movies"
         cursor.execute(sql)
         results = cursor.fetchall()
         returnArray = []
@@ -35,7 +53,7 @@ class StudentDAO:
 
     def findByID(self, id):
         cursor = self.db.cursor()
-        sql="select * from student where id = %s"
+        sql="select * from movies where id = %s"
         values = (id,)
 
         cursor.execute(sql, values)
@@ -44,12 +62,12 @@ class StudentDAO:
 
     def update(self, values):
         cursor = self.db.cursor()
-        sql="update student set name= %s, age=%s  where id = %s"
+        sql="update movies set movie= %s, rating=%s, year=%s, where id = %s"
         cursor.execute(sql, values)
         self.db.commit()
     def delete(self, id):
         cursor = self.db.cursor()
-        sql="delete from student where id = %s"
+        sql="delete from movies where id = %s"
         values = (id,)
 
         cursor.execute(sql, values)
@@ -58,7 +76,7 @@ class StudentDAO:
         print("delete done")
 
     def convertToDictionary(self, result):
-        colnames=['id','name','age']
+        colnames=['id','movie','rating', 'year']
         item = {}
         
         if result:
@@ -70,4 +88,4 @@ class StudentDAO:
     
 
 
-studentDAO = StudentDAO()
+moviesDAO = moviesDAO()
